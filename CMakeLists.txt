@@ -3,4 +3,4 @@ project(KDZ_archiver)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(KDZ_archiver main.cpp)
+add_executable(KDZ_archiver main.cpp LZ77.h ReadWrite.h ShannonFano.h Timer.h EntropyCalculator.h)
