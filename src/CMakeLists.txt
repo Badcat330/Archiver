@@ -1,1 +1,1 @@
-add_executable(KDZ_archiver main.cpp LZ77.h ReadWrite.h ShannonFano.h Timer.h EntropyCalculator.h ReadWrite.cpp)
+add_executable(KDZ_archiver main.cpp LZ77.h ReadWrite.h ShannonFano.h Timer.h EntropyCalculator.h ReadWrite.cpp ShannonFano.cpp)

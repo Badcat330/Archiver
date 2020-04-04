@@ -34,7 +34,7 @@ public:
      * Function for reading byte from stream
      * @return read byte
      */
-    byte read_byte();
+    bool read_byte(byte &symbol);
 
     /**
      * Function for writing byte into stream

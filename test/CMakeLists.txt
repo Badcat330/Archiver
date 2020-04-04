@@ -15,6 +15,7 @@ add_executable(tests
     # archivers sources
     ../src/LZ77.h
     ../src/ShannonFano.h
+    ../src/ShannonFano.cpp
     # gtest sources
     gtest/gtest-all.cc
     gtest/gtest_main.cc

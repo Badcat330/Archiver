@@ -30,11 +30,12 @@ ReadWrite::~ReadWrite()
     fout.close();
 }
 
-byte ReadWrite::read_byte()
+bool ReadWrite::read_byte(byte &symbol)
 {
-    byte new_byte;
-    fin >> new_byte;
-    return new_byte;
+    char ch;
+    fin.get(ch);
+    symbol = ch;
+    return !fin.eof();
 }
 
 void ReadWrite::write_byte(byte param)

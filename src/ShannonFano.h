@@ -7,8 +7,12 @@
 
 #include <string>
 #include <map>
+#include <iterator>
+#include <vector>
 
-typedef unsigned char byte;
+#include "ReadWrite.h"
+
+
 
 namespace archiver
 {
@@ -19,21 +23,33 @@ class ShannonFano
 public:
 
     /**
-     * Method for packing file from current path
-     * @param dir path
+     * Method for packing all files in dir
+     * @param path to dir
      */
-    void pack(std::string& path);
+    void pack_dir(std::string& path);
 
     /**
-     * Method for packing all files in dir
-     * @param dir path
+     * Method for unpacking all files in dir
+     * @param path to dir
      */
-    void unpack(std::string& path);
+    void unpack_dir(std::string& path);
+
+    /**
+     * Method for packing file
+     * @param path to file
+     */
+    void pack_file(std::string& path);
+
+    /**
+     * Method for unpacking file
+     * @param path to file
+     */
+    void unpack_file(std::string& path);
 
 private:
 
-    std::map<byte, int> chances;
-    std::map<byte, std::string> code_words;
+    std::vector<std::pair<byte, int>> chances;
+    std::vector<std::string> code_words;
 
     /**
      * build code from chances map
@@ -51,6 +67,12 @@ private:
      * @return median
      */
     int find_median(int left, int right);
+
+    /**
+     * Fill chances map
+     * @param path to file
+     */
+    void chances_add(ReadWrite read_write);
 
 }; // class ShannonFano
 
