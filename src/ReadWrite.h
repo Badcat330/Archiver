@@ -57,6 +57,24 @@ public:
      */
     void write_bitset(const std::bitset<8> &param);
 
+
+    /**
+     * Write something simply
+     * @tparam T what actually simply you want to write
+     * @param param value
+     */
+    template <typename T>
+    void write(const T &param){
+        if(fout.is_open())
+        {
+            fout << param;
+        }
+        else
+        {
+            throw std::invalid_argument("No output stream was initialized");
+        }
+    }
+
     /**
      * Put stream input in to begin
      */

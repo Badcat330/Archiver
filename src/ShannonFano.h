@@ -37,18 +37,19 @@ public:
      * Method for packing file
      * @param path to file
      */
-    void pack_file(std::string& path);
+    void pack_file(const std::string &path);
 
     /**
      * Method for unpacking file
      * @param path to file
      */
-    void unpack_file(std::string& path);
+    void unpack_file(const std::string &path);
 
 private:
 
     std::vector<std::pair<byte, int>> chances;
     std::map<byte, bit_code> code_words;
+    std::map<std::string, byte> decode_words;
 
     /**
      * Comparator for vector chance sorting

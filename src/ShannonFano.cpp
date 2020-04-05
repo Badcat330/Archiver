@@ -3,6 +3,7 @@
 //
 
 #include "ShannonFano.h"
+#include <iostream>
 
 namespace archiver
 {
@@ -81,7 +82,7 @@ void ShannonFano::chances_add(ReadWrite &read_write)
     }
 }
 
-void ShannonFano::pack_file(std::string &path)
+void ShannonFano::pack_file(const std::string &path)
 {
     // Create pack file name
     std::string out_path = path + ".shan";
@@ -122,13 +123,10 @@ void ShannonFano::pack_file(std::string &path)
                 ++write_count;
             }
         }
-        if(index != 7)
-        {
-            buf_bitset[index] = true;
-            read_write.write_bitset(buf_bitset);
-            buf_bitset.reset();
-            ++write_count;
-        }
+        buf_bitset[index] = true;
+        read_write.write_bitset(buf_bitset);
+        buf_bitset.reset();
+        ++write_count;
         while (write_count < number_bitset)
         {
             read_write.write_bitset(buf_bitset);
@@ -176,6 +174,101 @@ void ShannonFano::pack_file(std::string &path)
     // Write last set if it not clear
     if(index != 7)
         read_write.write_bitset(buf_bitset);
+
+    // Cleaning
+    code_words.clear();
+    chances.clear();
+}
+
+void ShannonFano::unpack_file(const std::string &path)
+{
+    if(path.substr(path.size() - 5, 5) != ".shan")
+        throw std::invalid_argument("Invalid file extension");
+
+    std::string out_path = path.substr(0, path.size() - 5) + ".unshan";
+
+    ReadWrite read_write(path, out_path);
+
+    byte symbols_number;
+    read_write.read_byte(symbols_number);
+
+    byte number_bitset;
+    read_write.read_byte(number_bitset);
+
+    for (int i = 0; i < symbols_number; ++i)
+    {
+        byte symbol;
+        read_write.read_byte(symbol);
+
+        byte buf;
+        std::string code;
+        for (int j = 0; j < number_bitset; ++j)
+        {
+            read_write.read_byte(buf);
+            std::bitset<8> set(buf);
+            code += set.to_string();
+        }
+
+        for (int k = code.length() - 1; k >= 0; --k)
+        {
+            if(code[k] == '1')
+            {
+                code = code.substr(0, k);
+                break;
+            }
+        }
+
+        decode_words[code] = symbol;
+    }
+
+    byte buf;
+    std::string code;
+    while (read_write.read_byte(buf))
+    {
+        std::bitset<8> set(buf);
+        std::string string_set = set.to_string();
+        for (int i = 0; i < 8; ++i)
+        {
+            code += string_set[i];
+            if(decode_words.find(code) != decode_words.end())
+            {
+                if(decode_words[code] == 3)
+                {
+                    decode_words.clear();
+                    return;
+                }
+
+                read_write.write_byte(decode_words[code]);
+                code = "";
+            }
+        }
+    }
+}
+
+void ShannonFano::pack_dir(std::string &path)
+{
+    for (const auto & entry : std::__fs::filesystem::directory_iterator(path))
+    {
+        std::string name = entry.path().filename();
+        if(name[0] != '.' &&
+           name.substr(name.length() - 5, 5) != ".shan" &&
+           name.substr(name.length() - 7, 7) != ".unshan")
+        {
+            pack_file(entry.path());
+        }
+    }
+}
+
+void ShannonFano::unpack_dir(std::string &path)
+{
+    for (const auto & entry : std::__fs::filesystem::directory_iterator(path))
+    {
+        std::string name = entry.path().filename();
+        if(name.substr(name.length() - 5, 5) == ".shan")
+        {
+            unpack_file(entry.path());
+        }
+    }
 }
 
 } // namespace archiver
