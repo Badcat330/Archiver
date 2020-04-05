@@ -7,10 +7,13 @@
 
 #include <fstream>
 
-typedef unsigned char byte;
 
 namespace archiver
 {
+
+typedef unsigned char byte;
+typedef std::vector<std::bitset<1>> bit_code;
+typedef std::bitset<1> bit;
 
 class ReadWrite
 {
@@ -22,7 +25,7 @@ public:
      * @param in to reading file
      * @param path to writing file
      */
-    ReadWrite(std::string in, std::string out);
+    ReadWrite(const std::string& in, const std::string& out = "");
 
     /**
      * Destructor
@@ -48,8 +51,19 @@ public:
      */
     void write_int(int param);
 
-private:
+    /**
+     * Function for writing string into stream
+     * @param param which we should write
+     */
+    void write_bitset(const std::bitset<8> &param);
 
+    /**
+     * Put stream input in to begin
+     */
+    void reset_reader();
+
+private:
+    std::string path_in;
     std::fstream fin;
     std::fstream fout;
 

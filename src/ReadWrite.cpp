@@ -2,50 +2,101 @@
 // Created by Alex Glushko on 03.04.2020.
 //
 
+#include <vector>
 #include "ReadWrite.h"
 
 namespace archiver
 {
 
-ReadWrite::ReadWrite(std::string in, std::string out)
+ReadWrite::ReadWrite(const std::string& in, const std::string& out)
 {
-    fin.open(in, std::ios::in);
-
-    if(!fin.is_open())
+    if(!in.empty())
     {
-        throw std::exception();
+        fin.open(in, std::ios::in);
+
+        if (!fin.is_open())
+        {
+            throw std::invalid_argument("Invalid in path");
+        }
+
+        path_in = in;
     }
 
-    fout.open(out, std::ios::out);
-
-    if(!fout.is_open())
+    if(!out.empty())
     {
-        throw std::exception();
+        fout.open(out, std::ios::out);
+
+        if (!fout.is_open())
+        {
+            throw std::invalid_argument("Invalid out path");
+        }
     }
 }
 
 ReadWrite::~ReadWrite()
 {
-    fin.close();
-    fout.close();
+    if(fin.is_open())
+        fin.close();
+
+    if(fout.is_open())
+        fout.close();
 }
 
 bool ReadWrite::read_byte(byte &symbol)
 {
-    char ch;
-    fin.get(ch);
-    symbol = ch;
-    return !fin.eof();
+    if(fin.is_open())
+    {
+        char ch;
+        fin.get(ch);
+        symbol = ch;
+        return !fin.eof();
+    }
+    else
+    {
+        throw std::invalid_argument("No input stream was initialized");
+    }
 }
 
 void ReadWrite::write_byte(byte param)
 {
-    fout << param;
+    if (fout.is_open())
+    {
+        fout << param;
+    }
+    else
+    {
+        throw std::invalid_argument("No output stream was initialized");
+    }
 }
 
 void ReadWrite::write_int(int param)
 {
-    fout << param;
+    if(fout.is_open())
+    {
+        fout << param;
+    }
+    else
+    {
+        throw std::invalid_argument("No output stream was initialized");
+    }
+}
+
+void ReadWrite::write_bitset(const std::bitset<8> &param)
+{
+    if(fout.is_open())
+    {
+        fout << (char)param.to_ulong();
+    }
+    else
+    {
+        throw std::invalid_argument("No output stream was initialized");
+    }
+}
+
+void ReadWrite::reset_reader()
+{
+    fin.close();
+    fin.open(path_in);
 }
 
 } // namespace archiver

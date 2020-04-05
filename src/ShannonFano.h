@@ -10,9 +10,8 @@
 #include <iterator>
 #include <vector>
 
+#include "../test/gtest/gtest_prod.h"
 #include "ReadWrite.h"
-
-
 
 namespace archiver
 {
@@ -49,21 +48,32 @@ public:
 private:
 
     std::vector<std::pair<byte, int>> chances;
-    std::vector<std::string> code_words;
+    std::map<byte, bit_code> code_words;
+
+    /**
+     * Comparator for vector chance sorting
+     */
+    struct pair_comparator
+    {
+        bool operator()(const std::pair<byte, int> &left,const std::pair<byte, int> &right)
+        {
+            return left.second > right.second;
+        }
+    };
 
     /**
      * build code from chances map
      * and write code in code map
-     * @param left ???
-     * @param right ???
+     * @param left index of vector
+     * @param right right index of vector
      * @param current_code
      */
-    void code_builder(int left, int right, std::string current_code);
+    void code_builder(int left, int right, bit_code current_code, int &max_lenght);
 
     /**
      * Find median of chances map
-     * @param left
-     * @param right
+     * @param left index of vector
+     * @param right index of vector
      * @return median
      */
     int find_median(int left, int right);
@@ -72,7 +82,11 @@ private:
      * Fill chances map
      * @param path to file
      */
-    void chances_add(ReadWrite read_write);
+    void chances_add(ReadWrite &read_write);
+
+    // Friend_Tests
+
+    FRIEND_TEST(ShennonFano, AddChanceTest);
 
 }; // class ShannonFano
 

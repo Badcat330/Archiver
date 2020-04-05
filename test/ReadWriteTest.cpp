@@ -25,9 +25,8 @@ TEST(ReadWriteTest, ReadTest)
     fout << test;
     fout.close();
 
-    // Crate ReadWriter and delete useless out file
-    ReadWrite readWrite("output.txt", "qwer.txt");
-    std::remove("qwer.txt");
+    // Crate ReadWriter
+    ReadWrite readWrite("output.txt");
 
     // Read file in string
     std::string out_string;
@@ -53,7 +52,7 @@ TEST(ReadWriteTest, WritingTest)
     int test_number = 134132;
 
     {
-        ReadWrite readWrite("Makefile", "output.txt");
+        ReadWrite readWrite("", "output.txt");
 
         for (byte i : test)
         {
@@ -88,4 +87,38 @@ TEST(ReadWriteTest, WritingTest)
 
     // Clean after testing
     std::remove("output.txt");
+}
+
+TEST(ReadWriteTest, ResetTest)
+{
+    using namespace archiver;
+
+    // Create file with special symbols
+    std::fstream fout;
+    fout.open("output.txt", std::ios::out);
+    std::string test = "qjdµbvp \n edcwe®fv \t \t   fasdv";
+    fout << test;
+    fout.close();
+
+    // Crate ReadWriter
+    ReadWrite readWrite("output.txt");
+
+    // Read file in string
+    std::string out_string_first;
+    byte buf = 0;
+    while (readWrite.read_byte(buf))
+    {
+        out_string_first += buf;
+    }
+
+    readWrite.reset_reader();
+
+    std::string out_string_second;
+    while (readWrite.read_byte(buf))
+    {
+        out_string_second += buf;
+    }
+
+    EXPECT_EQ(out_string_first, test);
+    EXPECT_EQ(out_string_second, test);
 }
