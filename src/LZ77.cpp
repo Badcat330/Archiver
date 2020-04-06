@@ -190,4 +190,36 @@ namespace archiver
             read_write.write_byte(byte);
         }
     }
+
+    void LZ77::pack_dir(std::string &path, int dictionary_len, int buffer_len)
+    {
+        for (const auto & entry : std::__fs::filesystem::directory_iterator(path))
+        {
+            std::string name = entry.path().filename();
+            if(name[0] != '.' &&
+               name.substr(name.length() - 6, 6) != ".lz775" &&
+               name.substr(name.length() - 7, 7) != ".lz7710" &&
+               name.substr(name.length() - 7, 7) != ".lz7720" &&
+                name.substr(name.length() - 8, 8) != ".unlz775" &&
+                name.substr(name.length() - 9, 9) != ".unlz7710" &&
+                name.substr(name.length() - 9, 9) != ".unlz7720")
+            {
+                pack_file(entry.path(), dictionary_len, buffer_len);
+            }
+        }
+    }
+
+    void LZ77::unpack_dir(std::string &path, int dictionary_len, int buffer_len)
+    {
+        for (const auto & entry : std::__fs::filesystem::directory_iterator(path))
+        {
+            std::string name = entry.path().filename();
+            if(name.substr(name.length() - 8, 8) == ".unlz775" ||
+               name.substr(name.length() - 9, 9) == ".unlz7710" ||
+               name.substr(name.length() - 9, 9) == ".unlz7720")
+            {
+                unpack_file(entry.path(), dictionary_len, buffer_len);
+            }
+        }
+    }
 }
