@@ -30,115 +30,47 @@ namespace archiver
 
         std::vector<std::vector<bit>> triplets;
 
-        std::vector<byte> str;
+        std::string str;
         byte buf;
-        bool flag = false;
 
-        // Male buffer
-        for (int i = 0; i < buffer_len; ++i)
+        while (read_write.read_byte(buf))
+            str += buf;
+        str += (char)3;
+
+        int pos = 0;
+        int best_offset;
+        int max_length;
+        char next;
+
         {
-            if(read_write.read_byte(buf))
+            int str_len = str.length();
+            int m = std::min(str_len - pos, dictionary_len);
+            int index = 0;
+            int restrict = 0;
+
+            while (pos < str_len)
             {
-                str.emplace(str.begin(), buf);
-            }
-            else
-            {
-                if(flag)
+                best_offset = max_length = 0;
+                next = str[pos];
+
+                for (int i = 1; i <= m; ++i)
                 {
-                    str.emplace(str.begin(), buf);
-                }
-                else
-                {
-                    str.emplace(str.begin(), 3);
-                    flag = true;
-                }
-            }
-        }
+                    restrict = std::max(0, pos - buffer_len);
+                    index = str.find(str.substr(pos, i), restrict);
 
-        while (true)
-        {
-            // Initializing
-            int best_offset = 0;
-            int max_len = 0;
-            byte max_char = str[buffer_len - 1];
-
-            // Find best len for offset
-            for (int i = buffer_len; i < str.size(); ++i)
-            {
-                int len = 0;
-                while ((len < buffer_len) &&
-                       str[buffer_len - 1 - len] != 0 &&
-                       str[i - len] == str[buffer_len - 1 - len])
-                    ++len;
-                if(len >= max_len && len != 0)
-                {
-                    max_len = len;
-                    best_offset = i - buffer_len + 1;
-                    max_char = str[buffer_len - 1 - len];
-                }
-            }
-
-            // Write triplet
-            std::vector<bit> triplet;
-            read_triplet(best_offset, triplet, offset_len);
-            read_triplet(max_len, triplet, maxLen_len);
-            read_triplet(max_char, triplet, 8);
-            triplets.push_back(triplet);
-
-
-            // Move window
-            while (max_len + 1 != 0)
-            {
-                --max_len;
-                if(read_write.read_byte(buf))
-                {
-                    if(str.size() == dictionary_len + buffer_len)
-                    {
-                        str.pop_back();
-                        str.emplace(str.begin(), buf);
-                    }
-                    else
-                    {
-                        str.emplace(str.begin(), buf);
-                    }
-                }
-                else
-                {
-                    if(str.size() == dictionary_len + buffer_len)
-                    {
-                        if (flag)
-                        {
-                            str.pop_back();
-                            str.emplace(str.begin(), buf);
-                        } else
-                        {
-                            str.pop_back();
-                            str.emplace(str.begin(), 3);
-                            flag = true;
-                        }
-                    }
-                    else
-                    {
-                        if (flag)
-                        {
-                            str.emplace(str.begin(), buf);
-                        } else
-                        {
-                            str.emplace(str.begin(), 3);
-                            flag = true;
-                        }
-                    }
-
-                    if(str[buffer_len - 1] == 0)
-                    {
+                    if (index >= pos || index == -1)
                         break;
-                    }
-                }
-            }
 
-            if(str[buffer_len - 1] == 0)
-            {
-                break;
+                    best_offset = pos - index;
+                    max_length = i;
+                    next = str[pos + i];
+                }
+                pos += max_length + 1;
+                std::vector<bit> triplet;
+                read_triplet(best_offset, triplet, offset_len);
+                read_triplet(max_length, triplet, maxLen_len);
+                read_triplet(next, triplet, 8);
+                triplets.push_back(triplet);
             }
         }
 
