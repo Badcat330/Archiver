@@ -6,12 +6,14 @@ add_executable(tests
     # utility tests
     ReadWriteTest.cpp
     UtilityTest.cpp
+    TimetTest.cpp
     # archivers tests
     ShannonFanoTest.cpp
     # utility sources
     ../src/Utility.h
     ../src/Utility.cpp
     ../src/Timer.h
+    ../src/Timer.cpp
     ../src/ReadWrite.h
     ../src/ReadWrite.cpp
     # archivers sources
