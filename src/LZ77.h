@@ -15,16 +15,28 @@ class LZ777
 
 public:
     /**
-     * Method for packing file from current path
-     * @param path to dir
-     */
-    void pack(std::string path);
-
-    /**
      * Method for packing all files in dir
      * @param path to dir
      */
-    void packDir(std::string path);
+    void pack_dir(std::string& path);
+
+    /**
+     * Method for unpacking all files in dir
+     * @param path to dir
+     */
+    void unpack_dir(std::string& path);
+
+    /**
+     * Method for packing file
+     * @param path to file
+     */
+    void pack_file(const std::string &path);
+
+    /**
+     * Method for unpacking file
+     * @param path to file
+     */
+    void unpack_file(const std::string &path);
 
 
 }; // class LZ77

@@ -98,11 +98,11 @@ void ShannonFano::pack_file(const std::string &path)
     code_builder(0, chances.size() - 1, bit_code(), max_length);
 
     // Write down number of symbols
-    read_write.write_byte((byte)code_words.size());
+    read_write.write_byte((byte)(code_words.size() - 1));
 
     // Write number of 8 length bit set for codes
     int number_bitset = (max_length + 1) % 8 != 0 ? (max_length + 1) / 8 + 1 : (max_length + 1) / 8;
-    read_write.write_byte(number_bitset);
+    read_write.write_byte(number_bitset - 1);
 
     // Write down symbol and it's code
     std::bitset<8> buf_bitset;
@@ -191,9 +191,11 @@ void ShannonFano::unpack_file(const std::string &path)
 
     byte symbols_number;
     read_write.read_byte(symbols_number);
+    ++symbols_number;
 
     byte number_bitset;
     read_write.read_byte(number_bitset);
+    ++number_bitset;
 
     for (int i = 0; i < symbols_number; ++i)
     {
