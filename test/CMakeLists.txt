@@ -9,6 +9,7 @@ add_executable(tests
     TimetTest.cpp
     # archivers tests
     ShannonFanoTest.cpp
+    LZ77Test.cpp
     # utility sources
     ../src/Utility.h
     ../src/Utility.cpp
@@ -18,11 +19,12 @@ add_executable(tests
     ../src/ReadWrite.cpp
     # archivers sources
     ../src/LZ77.h
+    ../src/LZ77.cpp
     ../src/ShannonFano.h
     ../src/ShannonFano.cpp
     # gtest sources
     gtest/gtest-all.cc
-    gtest/gtest_main.cc)
+    gtest/gtest_main.cc )
 
 # add pthread for unix systems
 if (UNIX)

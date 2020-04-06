@@ -8,4 +8,5 @@ add_executable(KDZ_archiver
         ReadWrite.cpp
         ShannonFano.cpp
         Utility.cpp
-        Timer.cpp)
+        Timer.cpp
+        LZ77.cpp)
