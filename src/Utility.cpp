@@ -128,7 +128,7 @@ namespace archiver
 
     void Utility::aspect_ratio(const std::string &path, const std::string &type)
     {
-        ReadWrite read_write("", path + "aspect_ratio.csv");
+        ReadWrite read_write("", path + "aspect_ratio" + type +".csv");
 
         for (const auto & entry : std::__fs::filesystem::directory_iterator(path))
         {

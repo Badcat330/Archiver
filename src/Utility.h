@@ -31,8 +31,6 @@ public:
      */
     void aspect_ratio(const std::string &path, const std::string &type);
 
-private:
-
     /**
      * Count size of file
      * @param path to file

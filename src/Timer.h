@@ -35,6 +35,8 @@ public:
      */
     std::string result_string();
 
+    double result();
+
     /**
      * Reset timer
      * put time_start and time_finish to 0
