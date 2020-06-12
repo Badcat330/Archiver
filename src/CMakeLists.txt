@@ -1,0 +1,12 @@
+add_executable(KDZ_archiver
+        main.cpp
+        LZ77.h
+        ReadWrite.h
+        ShannonFano.h
+        Timer.h
+        Utility.h
+        ReadWrite.cpp
+        ShannonFano.cpp
+        Utility.cpp
+        Timer.cpp
+        LZ77.cpp)
